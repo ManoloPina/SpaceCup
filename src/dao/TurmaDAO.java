@@ -6,6 +6,7 @@
 package dao;
 
 import conexao.Conexao;
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
 import modelo.Turma;
@@ -39,7 +40,7 @@ public class TurmaDAO extends DAO implements DaoInterface {
     //Lista todos elementos da tabela
     public ArrayList listar() {
        
-        this.sql = "SELECT * FROM TURMA";
+       this.sql = "SELECT * FROM TURMA";
        
        ArrayList<Turma> lista = new ArrayList();
        
@@ -55,6 +56,19 @@ public class TurmaDAO extends DAO implements DaoInterface {
         }
         
         return lista;
+    }
+    
+    public ResultSet listarTabela() {
+        this.sql = "SELECT NOME FROM TURMA";
+        ResultSet tableListResult = null;
+        try {
+            this.connection = conexao.getConnection();
+            this.prepareStatment = this.connection.prepareStatement(sql);
+            tableListResult = this.prepareStatment.executeQuery();
+        }catch(Exception e) {
+            System.out.println("Erro:"+e.getMessage());
+        }
+        return tableListResult;
     }
 
     public ArrayList pesquisar(Turma turma) {

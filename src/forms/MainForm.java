@@ -6,8 +6,12 @@
 package forms;
 
 import dao.TurmaDAO;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.sql.SQLException;
+import javax.swing.JTable;
 import modelo.Turma;
+import net.proteanit.sql.DbUtils;
 
 /**
  *
@@ -15,12 +19,28 @@ import modelo.Turma;
  */
 public class MainForm extends javax.swing.JFrame {
     
+    TurmaDAO turmaDao = new TurmaDAO();
+    
 
     /**
      * Creates new form MainForm
      */
     public MainForm() {
         initComponents();
+        
+        this.tableTurma.addMouseListener(new MouseAdapter() {
+            public void mousemouseClicked(MouseEvent e) {
+               if(e.getClickCount() == 1) {
+                    JTable target = (JTable)e.getSource();
+                    int row = target.getSelectedRow();
+                    int column = target.getSelectedColumn();
+                    // do some action if appropriate column
+                    System.out.println("Manolo");
+               }
+            }
+        });
+                
+        this.updateTableTurma();
     }
     
     
@@ -29,7 +49,7 @@ public class MainForm extends javax.swing.JFrame {
     
     */
     public void updateTableTurma() {
-        this.tableTurma.setModel("Manolo");
+        this.tableTurma.setModel(DbUtils.resultSetToTableModel(this.turmaDao.listarTabela()));
     }
 
     /**
@@ -563,6 +583,7 @@ public class MainForm extends javax.swing.JFrame {
         Turma turma = new Turma(turmaNome);
         TurmaDAO turmaDAO = new TurmaDAO();
         turmaDAO.inserir(turma);
+        this.updateTableTurma();
     }//GEN-LAST:event_btnCadastrarTurmaActionPerformed
 
     /**
