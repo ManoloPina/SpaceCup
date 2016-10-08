@@ -134,6 +134,11 @@ public class MainForm extends javax.swing.JFrame {
         });
 
         btnPesquisarTurma.setText("Pesquisar");
+        btnPesquisarTurma.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnPesquisarTurmaActionPerformed(evt);
+            }
+        });
 
         tableTurma.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -613,6 +618,12 @@ public class MainForm extends javax.swing.JFrame {
     private void btnAlterarTurmaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAlterarTurmaActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_btnAlterarTurmaActionPerformed
+
+    private void btnPesquisarTurmaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPesquisarTurmaActionPerformed
+        // TODO add your handling code here:
+        String termo = this.txtTurma.getText();   
+        this.tableTurma.setModel(DbUtils.resultSetToTableModel(this.turmaDao.pesquisarTable(termo)));
+    }//GEN-LAST:event_btnPesquisarTurmaActionPerformed
 
     /**
      * @param args the command line arguments
