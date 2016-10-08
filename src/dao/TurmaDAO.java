@@ -70,6 +70,30 @@ public class TurmaDAO extends DAO implements DaoInterface {
         }
         return tableListResult;
     }
+    
+    public ResultSet pesquisarTable(String nome) {
+        this.sql = "SELECT (NOME) FROM TURMA WHERE NOME LIKE ?";
+        
+        this.sql = this.sql
+        .replace("!", "!!")
+        .replace("%", "!%")
+        .replace("_", "!_")
+        .replace("[", "![");
+        
+        ResultSet tableListResult = null;
+        
+        try {
+            this.connection = conexao.getConnection();
+            this.prepareStatment = this.connection.prepareStatement(sql);
+            this.prepareStatment.setString(1, "%" + nome + "%");
+            tableListResult = this.prepareStatment.executeQuery();
+            System.out.println(tableListResult);
+        }catch(Exception e) {
+            JOptionPane.showMessageDialog(null, e.getMessage());
+        }
+        
+        return tableListResult;
+    }
 
     public ArrayList pesquisar(Turma turma) {
         
