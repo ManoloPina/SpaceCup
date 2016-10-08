@@ -9,7 +9,11 @@ import dao.TurmaDAO;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.SQLException;
+import javax.swing.JOptionPane;
 import javax.swing.JTable;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.plaf.basic.BasicListUI;
 import modelo.Turma;
 import net.proteanit.sql.DbUtils;
 
@@ -21,24 +25,26 @@ public class MainForm extends javax.swing.JFrame {
     
     TurmaDAO turmaDao = new TurmaDAO();
     
+    
+    
 
     /**
      * Creates new form MainForm
      */
     public MainForm() {
+        
         initComponents();
         
-        this.tableTurma.addMouseListener(new MouseAdapter() {
-            public void mousemouseClicked(MouseEvent e) {
-               if(e.getClickCount() == 1) {
-                    JTable target = (JTable)e.getSource();
-                    int row = target.getSelectedRow();
-                    int column = target.getSelectedColumn();
-                    // do some action if appropriate column
-                    System.out.println("Manolo");
-               }
+        this.tableTurma.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+//                JOptionPane.showConfirmDialog(null, tableTurma.getValueAt(tableTurma.getSelectedRow(), 0).toString());
+                txtTurma.setText(tableTurma.getValueAt(tableTurma.getSelectedRow(), 0).toString());
             }
         });
+        
+        
+        
                 
         this.updateTableTurma();
     }
@@ -65,11 +71,13 @@ public class MainForm extends javax.swing.JFrame {
         jTabbedPane6 = new javax.swing.JTabbedPane();
         jPanel1 = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
-        textTurmaNome = new javax.swing.JTextField();
+        txtTurma = new javax.swing.JTextField();
         btnCadastrarTurma = new javax.swing.JButton();
         btnPesquisarTurma = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         tableTurma = new javax.swing.JTable();
+        btnAlterarTurma = new javax.swing.JButton();
+        btnExcluirTurma = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
         txtGrupoNome = new javax.swing.JTextField();
@@ -112,9 +120,9 @@ public class MainForm extends javax.swing.JFrame {
 
         jLabel1.setText("Nome da turma");
 
-        textTurmaNome.addActionListener(new java.awt.event.ActionListener() {
+        txtTurma.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                textTurmaNomeActionPerformed(evt);
+                txtTurmaActionPerformed(evt);
             }
         });
 
@@ -165,6 +173,15 @@ public class MainForm extends javax.swing.JFrame {
             tableTurma.getColumnModel().getColumn(2).setHeaderValue("Excluir");
         }
 
+        btnAlterarTurma.setText("Alterar");
+        btnAlterarTurma.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAlterarTurmaActionPerformed(evt);
+            }
+        });
+
+        btnExcluirTurma.setText("Excluir");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -172,15 +189,20 @@ public class MainForm extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(21, 21, 21)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(btnCadastrarTurma)
-                        .addGap(29, 29, 29)
-                        .addComponent(btnPesquisarTurma))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addGap(18, 18, 18)
-                        .addComponent(textTurmaNome, javax.swing.GroupLayout.PREFERRED_SIZE, 246, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 739, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 739, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
+                            .addComponent(jLabel1)
+                            .addGap(18, 18, 18)
+                            .addComponent(txtTurma))
+                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
+                            .addComponent(btnCadastrarTurma)
+                            .addGap(18, 18, 18)
+                            .addComponent(btnAlterarTurma)
+                            .addGap(18, 18, 18)
+                            .addComponent(btnExcluirTurma)
+                            .addGap(18, 18, 18)
+                            .addComponent(btnPesquisarTurma))))
                 .addContainerGap(22, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
@@ -189,11 +211,13 @@ public class MainForm extends javax.swing.JFrame {
                 .addGap(25, 25, 25)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
-                    .addComponent(textTurmaNome, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtTurma, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnCadastrarTurma)
-                    .addComponent(btnPesquisarTurma))
+                    .addComponent(btnPesquisarTurma)
+                    .addComponent(btnAlterarTurma)
+                    .addComponent(btnExcluirTurma))
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 254, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(202, Short.MAX_VALUE))
@@ -537,9 +561,9 @@ public class MainForm extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_jComboBox2ComponentRemoved
 
-    private void textTurmaNomeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_textTurmaNomeActionPerformed
+    private void txtTurmaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtTurmaActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_textTurmaNomeActionPerformed
+    }//GEN-LAST:event_txtTurmaActionPerformed
 
     private void txtAltitudeMediaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtAltitudeMediaActionPerformed
         // TODO add your handling code here:
@@ -579,12 +603,16 @@ public class MainForm extends javax.swing.JFrame {
 
     private void btnCadastrarTurmaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCadastrarTurmaActionPerformed
         // TODO add your handling code here:
-        String turmaNome = textTurmaNome.getText();
+        String turmaNome = txtTurma.getText();
         Turma turma = new Turma(turmaNome);
         TurmaDAO turmaDAO = new TurmaDAO();
         turmaDAO.inserir(turma);
         this.updateTableTurma();
     }//GEN-LAST:event_btnCadastrarTurmaActionPerformed
+
+    private void btnAlterarTurmaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAlterarTurmaActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btnAlterarTurmaActionPerformed
 
     /**
      * @param args the command line arguments
@@ -622,9 +650,11 @@ public class MainForm extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnAlterarTurma;
     private javax.swing.JButton btnCadastrarAluno;
     private javax.swing.JButton btnCadastrarGrupo;
     private javax.swing.JButton btnCadastrarTurma;
+    private javax.swing.JButton btnExcluirTurma;
     private javax.swing.JButton btnPesquisarAluno;
     private javax.swing.JButton btnPesquisarGrupo;
     private javax.swing.JButton btnPesquisarTurma;
@@ -656,7 +686,6 @@ public class MainForm extends javax.swing.JFrame {
     private javax.swing.JTabbedPane jTabbedPane6;
     private javax.swing.JComboBox<String> selectGrupoCombo;
     private javax.swing.JTable tableTurma;
-    private javax.swing.JTextField textTurmaNome;
     private javax.swing.JTextField txtAceleracaoMedia;
     private javax.swing.JTextField txtAltitudeEjecao;
     private javax.swing.JTextField txtAltitudeMedia;
@@ -667,6 +696,7 @@ public class MainForm extends javax.swing.JFrame {
     private javax.swing.JTextField txtTempoApogeuDescida;
     private javax.swing.JTextField txtTempoEjecao;
     private javax.swing.JTextField txtTempoPropulsao;
+    private javax.swing.JTextField txtTurma;
     private javax.swing.JTextField txtVelocidadeMedia;
     // End of variables declaration//GEN-END:variables
 }
