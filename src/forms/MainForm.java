@@ -5,15 +5,18 @@
  */
 package forms;
 
+import dao.GrupoDAO;
 import dao.TurmaDAO;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.plaf.basic.BasicListUI;
+import modelo.Grupo;
 import modelo.Turma;
 import net.proteanit.sql.DbUtils;
 
@@ -24,6 +27,7 @@ import net.proteanit.sql.DbUtils;
 public class MainForm extends javax.swing.JFrame {
     
     TurmaDAO turmaDao = new TurmaDAO();
+    GrupoDAO grupoDao  = new GrupoDAO();
     String turmaSelecionada;
 
     /**
@@ -40,11 +44,10 @@ public class MainForm extends javax.swing.JFrame {
                 txtTurma.setText(tableTurma.getValueAt(tableTurma.getSelectedRow(), 0).toString());
             }
         });
+//        this.grupoDao.listar().forEach(action);
         
-        
-        
-                
         this.updateTableTurma();
+        this.updateTableGrupo();
     }
     
     
@@ -54,6 +57,14 @@ public class MainForm extends javax.swing.JFrame {
     */
     public void updateTableTurma() {
         this.tableTurma.setModel(DbUtils.resultSetToTableModel(this.turmaDao.listarTabela()));
+    }
+    
+    public void updateTableGrupo() {
+        int i = 0;
+        for(Grupo grupo : this.grupoDao.listar()) {
+            this.tableGrupo.getModel().setValueAt(grupo.getNome(), i, 0);
+            i++;
+        }
     }
 
     /**
@@ -84,7 +95,7 @@ public class MainForm extends javax.swing.JFrame {
         btnAlterarGrupo = new javax.swing.JButton();
         btnExcluirGrupo = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        tableGrupo = new javax.swing.JTable();
         jPanel3 = new javax.swing.JPanel();
         jPanel5 = new javax.swing.JPanel();
         jLabel4 = new javax.swing.JLabel();
@@ -240,6 +251,11 @@ public class MainForm extends javax.swing.JFrame {
         jLabel2.setText("Nome do grupo");
 
         btnCadastrarGrupo.setText("Cadastrar");
+        btnCadastrarGrupo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCadastrarGrupoActionPerformed(evt);
+            }
+        });
 
         btnPesquisarGrupo.setText("Pesquisar");
 
@@ -257,18 +273,39 @@ public class MainForm extends javax.swing.JFrame {
             }
         });
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        tableGrupo.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
+                {null},
+                {null},
+                {null},
+                {null},
+                {null},
+                {null},
+                {null},
+                {null},
+                {null},
+                {null}
             },
             new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
+                "Nome"
             }
-        ));
-        jScrollPane2.setViewportView(jTable1);
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jScrollPane2.setViewportView(tableGrupo);
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -688,6 +725,14 @@ public class MainForm extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_jComboBox2ComponentRemoved
 
+    private void btnCadastrarGrupoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCadastrarGrupoActionPerformed
+        // TODO add your handling code here:
+        System.out.println(txtGrupoNome.getText());
+        Grupo grupo = new Grupo(txtGrupoNome.getText());
+        this.grupoDao.cadastrar(grupo);
+        this.updateTableGrupo();
+    }//GEN-LAST:event_btnCadastrarGrupoActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -761,8 +806,8 @@ public class MainForm extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTabbedPane jTabbedPane6;
-    private javax.swing.JTable jTable1;
     private javax.swing.JComboBox<String> selectGrupoCombo;
+    private javax.swing.JTable tableGrupo;
     private javax.swing.JTable tableTurma;
     private javax.swing.JTextField txtAceleracaoMedia;
     private javax.swing.JTextField txtAltitudeEjecao;
