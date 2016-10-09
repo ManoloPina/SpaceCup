@@ -131,4 +131,17 @@ public class TurmaDAO extends DAO implements DaoInterface {
         
     }
     
+    public void alterarTurma(Turma turmaSelecionada, Turma turmaNova) {
+        this.sql = "UPDATE TURMA SET NOME=? WHERE NOME=?";
+        try {
+            this.prepareStatment = this.connection.prepareStatement(sql);
+            this.prepareStatment.setString(1, turmaNova.getNome());
+            this.prepareStatment.setString(2, turmaSelecionada.getNome());
+            this.prepareStatment.executeUpdate();
+        }catch(Exception e) {
+            JOptionPane.showMessageDialog(null, "Erro:"+e.getMessage());
+        }
+        
+    }
+    
 }
