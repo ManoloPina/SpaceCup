@@ -48,7 +48,7 @@ public class TurmaDAO extends DAO implements DaoInterface {
             this.connection = Conexao.getConnection();    
             this.prepareStatment = this.connection.prepareStatement(sql);
             this.result = this.prepareStatment.executeQuery();    
-            while(this.result.next()) {                
+            while(this.result.next()) {
                 lista.add(new Turma(this.result.getString("NOME")));
             }
         }catch(Exception e) {

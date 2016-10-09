@@ -11,14 +11,35 @@ import java.util.ArrayList;
  *
  * @author manolopina
  */
-public class Grupo extends Turma {
+public class Grupo  {
     
+    private int id;
     private String nome;
-    private ArrayList<String> componentes = new ArrayList();
+//    private ArrayList<String> componentes = new ArrayList();
     
-    public Grupo(String nomeTurma,String nome, ArrayList<String> componentes) {
-        super(nomeTurma);
+    public Grupo(String nome) {
         this.nome = nome;
-        this.componentes = componentes;
     }
+    
+    public Grupo(int id, String nome) {
+        this.id = id;
+        this.nome = nome;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+    
 }
