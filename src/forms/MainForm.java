@@ -44,10 +44,8 @@ public class MainForm extends javax.swing.JFrame {
                 txtTurma.setText(tableTurma.getValueAt(tableTurma.getSelectedRow(), 0).toString());
             }
         });
-//        this.grupoDao.listar().forEach(action);
         
-        this.updateTableTurma();
-        this.updateTableGrupo();
+        this.updateTables();
     }
     
     
@@ -65,6 +63,11 @@ public class MainForm extends javax.swing.JFrame {
             this.tableGrupo.getModel().setValueAt(grupo.getNome(), i, 0);
             i++;
         }
+    }
+    
+    public void updateTables() {
+        this.updateTableTurma();
+        this.updateTableGrupo();
     }
 
     /**
