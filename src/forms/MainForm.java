@@ -29,6 +29,7 @@ public class MainForm extends javax.swing.JFrame {
     TurmaDAO turmaDao = new TurmaDAO();
     GrupoDAO grupoDao  = new GrupoDAO();
     String turmaSelecionada;
+    String grupoSelecionado;
 
     /**
      * Creates new form MainForm
@@ -42,6 +43,14 @@ public class MainForm extends javax.swing.JFrame {
             public void valueChanged(ListSelectionEvent e) {
                 turmaSelecionada = tableTurma.getValueAt(tableTurma.getSelectedRow(), 0).toString();
                 txtTurma.setText(tableTurma.getValueAt(tableTurma.getSelectedRow(), 0).toString());
+            }
+        });
+        
+        this.tableGrupo.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                txtGrupoNome.setText(tableGrupo.getValueAt(tableGrupo.getSelectedRow(), 0).toString());
+                grupoSelecionado = tableGrupo.getValueAt(tableGrupo.getSelectedRow(), 0).toString();
             }
         });
         
@@ -714,6 +723,10 @@ public class MainForm extends javax.swing.JFrame {
 
     private void btnAlterarGrupoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAlterarGrupoActionPerformed
         // TODO add your handling code here:
+        Grupo grupoAlterado = new Grupo(this.txtGrupoNome.getText());
+        Grupo grupoSelecionado = new Grupo(this.grupoSelecionado);
+        this.grupoDao.alterar(grupoAlterado, grupoSelecionado);
+        this.updateTables();
     }//GEN-LAST:event_btnAlterarGrupoActionPerformed
 
     private void btnExcluirGrupoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExcluirGrupoActionPerformed
