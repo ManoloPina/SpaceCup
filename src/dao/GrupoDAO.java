@@ -6,6 +6,8 @@
 package dao;
 
 import conexao.Conexao;
+import java.awt.HeadlessException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
 import modelo.Grupo;
@@ -48,6 +50,34 @@ public class GrupoDAO extends DAO implements DaoInterface {
         }
         
         return lista;
+    }
+    
+    public void alterar(Grupo grupoAlterado, Grupo grupoSelecionado) {
+        
+        this.sql = "UPDATE GRUPO SET NOME=? WHERE NOME=?";
+        
+        try {
+        this.connection = Conexao.getConnection();
+        this.prepareStatment = this.connection.prepareStatement(sql);
+        this.prepareStatment.setString(1, grupoAlterado.getNome());
+        this.prepareStatment.setString(2, grupoSelecionado.getNome());
+        this.prepareStatment.executeUpdate();
+        JOptionPane.showMessageDialog(null, "Grupo alterado com sucesso!");
+        }catch(Exception e) {
+            JOptionPane.showMessageDialog(null, e.getMessage());
+        }
+    }
+    
+    public void deletar(Grupo grupo) {
+       this.sql = "DELETE FROM GRUPO WHERE NOME=?";
+       try {
+        this.connection = Conexao.getConnection();
+        this.prepareStatment = this.connection.prepareStatement(sql);
+        this.prepareStatment.setString(1, grupo.getNome());
+        JOptionPane.showMessageDialog(null, "O Grupo selecionado foi deletado!");
+       }catch(SQLException | HeadlessException e) {
+           JOptionPane.showMessageDialog(null, "Erro: "+e.getMessage());
+       }
     }
     
 }
