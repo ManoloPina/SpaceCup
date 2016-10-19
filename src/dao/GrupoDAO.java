@@ -74,7 +74,7 @@ public class GrupoDAO extends DAO implements DaoInterface {
         this.connection = Conexao.getConnection();
         this.prepareStatment = this.connection.prepareStatement(sql);
         this.prepareStatment.setString(1, grupo.getNome());
-        JOptionPane.showMessageDialog(null, "O Grupo selecionado foi deletado!");
+        this.prepareStatment.executeUpdate();
        }catch(SQLException | HeadlessException e) {
            JOptionPane.showMessageDialog(null, "Erro: "+e.getMessage());
        }

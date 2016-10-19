@@ -731,6 +731,10 @@ public class MainForm extends javax.swing.JFrame {
 
     private void btnExcluirGrupoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExcluirGrupoActionPerformed
         // TODO add your handling code here:
+        Grupo grupo = new Grupo(txtGrupoNome.getText());
+        this.grupoDao.deletar(grupo);
+        JOptionPane.showMessageDialog(null, "Grupo excluído");
+        this.updateTables();
     }//GEN-LAST:event_btnExcluirGrupoActionPerformed
 
     private void selectGrupoComboComponentRemoved(java.awt.event.ContainerEvent evt) {//GEN-FIRST:event_selectGrupoComboComponentRemoved
