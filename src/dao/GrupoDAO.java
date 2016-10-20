@@ -80,4 +80,30 @@ public class GrupoDAO extends DAO implements DaoInterface {
        }
     }
     
+    public ArrayList<Grupo> pesquisar(Grupo grupo) {
+        this.sql = "SELECT (NOME) FROM GRUPO WHERE NOME LIKE ?";
+        
+        this.sql = this.sql
+        .replace("!", "!!")
+        .replace("%", "!%")
+        .replace("_", "!_")
+        .replace("[", "![");
+       
+       ArrayList<Grupo> lista = new ArrayList();
+       
+        try {
+            this.connection = Conexao.getConnection();    
+            this.prepareStatment = this.connection.prepareStatement(sql);
+            this.prepareStatment.setString(1, "%" + grupo.getNome() + "%");
+            this.result = this.prepareStatment.executeQuery();
+            while(this.result.next()) {                
+                lista.add(new Grupo(this.result.getString("NOME")));
+            }
+        }catch(Exception e) {
+           System.out.println(e.getMessage());
+        }
+        
+        return lista;
+    }
+    
 }

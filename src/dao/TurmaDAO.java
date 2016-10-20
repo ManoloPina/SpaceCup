@@ -38,7 +38,7 @@ public class TurmaDAO extends DAO implements DaoInterface {
 
     @Override
     //Lista todos elementos da tabela
-    public ArrayList listar() {
+    public ArrayList<Turma> listar() {
        
        this.sql = "SELECT * FROM TURMA";
        

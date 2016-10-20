@@ -5,6 +5,7 @@
  */
 package forms;
 
+import dao.AlunoDAO;
 import dao.GrupoDAO;
 import dao.TurmaDAO;
 import java.awt.event.MouseAdapter;
@@ -16,6 +17,7 @@ import javax.swing.JTable;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.plaf.basic.BasicListUI;
+import modelo.Aluno;
 import modelo.Grupo;
 import modelo.Turma;
 import net.proteanit.sql.DbUtils;
@@ -28,6 +30,7 @@ public class MainForm extends javax.swing.JFrame {
     
     TurmaDAO turmaDao = new TurmaDAO();
     GrupoDAO grupoDao  = new GrupoDAO();
+    AlunoDAO alunoDao = new AlunoDAO();
     String turmaSelecionada;
     String grupoSelecionado;
 
@@ -54,13 +57,15 @@ public class MainForm extends javax.swing.JFrame {
             }
         });
         
+        
+        
+        this.updateComboBoxes();
         this.updateTables();
     }
     
     
     /*
     Load table
-    
     */
     public void updateTableTurma() {
         this.tableTurma.setModel(DbUtils.resultSetToTableModel(this.turmaDao.listarTabela()));
@@ -72,6 +77,35 @@ public class MainForm extends javax.swing.JFrame {
             this.tableGrupo.getModel().setValueAt(grupo.getNome(), i, 0);
             i++;
         }
+    }
+    
+    public void updateTableGrupo(String termo) {
+        int i = 0;
+        for(Grupo grupo : this.grupoDao.pesquisar(new Grupo(termo))) {
+            this.tableGrupo.getModel().setValueAt(grupo.getNome(), i, 0);
+            i++;
+        }
+    }
+    
+    //Population select comboboxes
+    public void updateSelectTurma() {
+        int i = 0;
+        for(Turma turma : this.turmaDao.listar()) {
+            this.selectTurma.addItem(turma.getNome());
+        }
+    }
+    
+    public void updateSelectGrupo() {
+        int i = 0;
+        for(Grupo grupo : this.grupoDao.listar()) {
+            this.selectGrupoCombo.addItem(grupo.getNome());
+        }
+    }
+    
+    
+    public void updateComboBoxes() {
+        this.updateSelectTurma();
+        this.updateSelectGrupo();
     }
     
     public void updateTables() {
@@ -111,13 +145,17 @@ public class MainForm extends javax.swing.JFrame {
         jPanel3 = new javax.swing.JPanel();
         jPanel5 = new javax.swing.JPanel();
         jLabel4 = new javax.swing.JLabel();
-        txtAlunoNome1 = new javax.swing.JTextField();
+        txtAlunoNome = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
-        jComboBox2 = new javax.swing.JComboBox<>();
+        selectTurma = new javax.swing.JComboBox<>();
         btnCadastrarAluno = new javax.swing.JButton();
         btnPesquisarAluno = new javax.swing.JButton();
         jLabel6 = new javax.swing.JLabel();
         selectGrupoCombo = new javax.swing.JComboBox<>();
+        btnAlterarAluno = new javax.swing.JButton();
+        btnExcluirAluno = new javax.swing.JButton();
+        jLabel17 = new javax.swing.JLabel();
+        txtRMAluno = new javax.swing.JTextField();
         jPanel4 = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
@@ -270,6 +308,11 @@ public class MainForm extends javax.swing.JFrame {
         });
 
         btnPesquisarGrupo.setText("Pesquisar");
+        btnPesquisarGrupo.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnPesquisarGrupoActionPerformed(evt);
+            }
+        });
 
         btnAlterarGrupo.setText("Alterar");
         btnAlterarGrupo.addActionListener(new java.awt.event.ActionListener() {
@@ -371,25 +414,41 @@ public class MainForm extends javax.swing.JFrame {
 
         jLabel5.setText("Selecionar turma :");
 
-        jComboBox2.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Não existe nenhuma turma cadastrada", " " }));
-        jComboBox2.addContainerListener(new java.awt.event.ContainerAdapter() {
+        selectTurma.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Não existe nenhuma turma cadastrada" }));
+        selectTurma.addContainerListener(new java.awt.event.ContainerAdapter() {
             public void componentRemoved(java.awt.event.ContainerEvent evt) {
-                jComboBox2ComponentRemoved(evt);
+                selectTurmaComponentRemoved(evt);
+            }
+        });
+        selectTurma.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                selectTurmaActionPerformed(evt);
             }
         });
 
-        btnCadastrarAluno.setText("Cadastrar Aluno");
+        btnCadastrarAluno.setText("Cadastrar");
+        btnCadastrarAluno.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCadastrarAlunoActionPerformed(evt);
+            }
+        });
 
-        btnPesquisarAluno.setText("Pesquisar aluno");
+        btnPesquisarAluno.setText("Pesquisar");
 
         jLabel6.setText("Selecionar grupo");
 
-        selectGrupoCombo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Não existe nenhuma turma cadastrada", " " }));
+        selectGrupoCombo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Não existe nenhuma turma cadastrada" }));
         selectGrupoCombo.addContainerListener(new java.awt.event.ContainerAdapter() {
             public void componentRemoved(java.awt.event.ContainerEvent evt) {
                 selectGrupoComboComponentRemoved(evt);
             }
         });
+
+        btnAlterarAluno.setText("Alterar");
+
+        btnExcluirAluno.setText("Excluir");
+
+        jLabel17.setText("RM Aluno");
 
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
@@ -399,25 +458,34 @@ public class MainForm extends javax.swing.JFrame {
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel5Layout.createSequentialGroup()
                         .addGap(18, 18, 18)
-                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel5Layout.createSequentialGroup()
-                                .addComponent(jLabel6)
-                                .addGap(18, 18, 18)
-                                .addComponent(selectGrupoCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                .addGroup(jPanel5Layout.createSequentialGroup()
+                                    .addComponent(jLabel4)
+                                    .addGap(18, 18, 18)
+                                    .addComponent(txtAlunoNome, javax.swing.GroupLayout.PREFERRED_SIZE, 311, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGroup(jPanel5Layout.createSequentialGroup()
+                                    .addComponent(jLabel6)
+                                    .addGap(18, 18, 18)
+                                    .addComponent(selectGrupoCombo, javax.swing.GroupLayout.PREFERRED_SIZE, 306, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
+                                    .addComponent(jLabel17)
+                                    .addGap(18, 18, 18)
+                                    .addComponent(txtRMAluno, javax.swing.GroupLayout.PREFERRED_SIZE, 311, javax.swing.GroupLayout.PREFERRED_SIZE)))
                             .addGroup(jPanel5Layout.createSequentialGroup()
                                 .addComponent(jLabel5)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(jPanel5Layout.createSequentialGroup()
-                                .addComponent(jLabel4)
-                                .addGap(18, 18, 18)
-                                .addComponent(txtAlunoNome1, javax.swing.GroupLayout.PREFERRED_SIZE, 291, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(selectTurma, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
                     .addGroup(jPanel5Layout.createSequentialGroup()
                         .addContainerGap()
                         .addComponent(btnCadastrarAluno)
-                        .addGap(30, 30, 30)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnAlterarAluno)
+                        .addGap(18, 18, 18)
+                        .addComponent(btnExcluirAluno)
+                        .addGap(18, 18, 18)
                         .addComponent(btnPesquisarAluno)))
-                .addContainerGap(343, Short.MAX_VALUE))
+                .addContainerGap(328, Short.MAX_VALUE))
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -425,20 +493,26 @@ public class MainForm extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
-                    .addComponent(txtAlunoNome1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtAlunoNome, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel17)
+                    .addComponent(txtRMAluno, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(10, 10, 10)
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel5)
-                    .addComponent(jComboBox2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
+                    .addComponent(selectTurma, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(22, 22, 22)
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel6)
                     .addComponent(selectGrupoCombo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(25, 25, 25)
+                .addGap(18, 18, 18)
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(btnCadastrarAluno)
-                    .addComponent(btnPesquisarAluno))
-                .addContainerGap(228, Short.MAX_VALUE))
+                    .addComponent(btnPesquisarAluno)
+                    .addComponent(btnAlterarAluno)
+                    .addComponent(btnExcluirAluno))
+                .addContainerGap(211, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
@@ -455,7 +529,7 @@ public class MainForm extends javax.swing.JFrame {
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(150, Short.MAX_VALUE))
+                .addContainerGap(134, Short.MAX_VALUE))
         );
 
         jTabbedPane6.addTab("Aluno", jPanel3);
@@ -697,7 +771,8 @@ public class MainForm extends javax.swing.JFrame {
         Turma turma = new Turma(turmaNome);
         TurmaDAO turmaDAO = new TurmaDAO();
         turmaDAO.inserir(turma);
-        this.updateTableTurma();
+        this.updateComboBoxes();
+        this.updateTables();
     }//GEN-LAST:event_btnCadastrarTurmaActionPerformed
 
     private void btnAlterarTurmaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAlterarTurmaActionPerformed
@@ -741,17 +816,41 @@ public class MainForm extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_selectGrupoComboComponentRemoved
 
-    private void jComboBox2ComponentRemoved(java.awt.event.ContainerEvent evt) {//GEN-FIRST:event_jComboBox2ComponentRemoved
+    private void selectTurmaComponentRemoved(java.awt.event.ContainerEvent evt) {//GEN-FIRST:event_selectTurmaComponentRemoved
         // TODO add your handling code here:
-    }//GEN-LAST:event_jComboBox2ComponentRemoved
+    }//GEN-LAST:event_selectTurmaComponentRemoved
 
     private void btnCadastrarGrupoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCadastrarGrupoActionPerformed
         // TODO add your handling code here:
         System.out.println(txtGrupoNome.getText());
         Grupo grupo = new Grupo(txtGrupoNome.getText());
         this.grupoDao.cadastrar(grupo);
-        this.updateTableGrupo();
+        this.updateTables();
+        this.updateComboBoxes();
     }//GEN-LAST:event_btnCadastrarGrupoActionPerformed
+
+    private void btnPesquisarGrupoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPesquisarGrupoActionPerformed
+        // TODO add your handling code here:
+        String termo = this.txtGrupoNome.getText();
+        this.tableGrupo.clearSelection();
+        this.updateTableGrupo(termo);
+    }//GEN-LAST:event_btnPesquisarGrupoActionPerformed
+
+    private void selectTurmaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_selectTurmaActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_selectTurmaActionPerformed
+
+    private void btnCadastrarAlunoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCadastrarAlunoActionPerformed
+        // TODO add your handling code here:        
+        this.alunoDao.inserir(new Aluno(
+                this.selectTurma.getSelectedItem().toString(), 
+                txtAlunoNome.getText(), 
+                Integer.parseInt(txtRMAluno.getText()), 
+                this.selectGrupoCombo.getSelectedItem().toString())
+        );
+        this.updateTables();
+        this.updateComboBoxes();
+    }//GEN-LAST:event_btnCadastrarAlunoActionPerformed
 
     /**
      * @param args the command line arguments
@@ -789,18 +888,19 @@ public class MainForm extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnAlterarAluno;
     private javax.swing.JButton btnAlterarGrupo;
     private javax.swing.JButton btnAlterarTurma;
     private javax.swing.JButton btnCadastrarAluno;
     private javax.swing.JButton btnCadastrarGrupo;
     private javax.swing.JButton btnCadastrarTurma;
+    private javax.swing.JButton btnExcluirAluno;
     private javax.swing.JButton btnExcluirGrupo;
     private javax.swing.JButton btnExcluirTurma;
     private javax.swing.JButton btnPesquisarAluno;
     private javax.swing.JButton btnPesquisarGrupo;
     private javax.swing.JButton btnPesquisarTurma;
     private javax.swing.JComboBox<String> jComboBox1;
-    private javax.swing.JComboBox<String> jComboBox2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
@@ -809,6 +909,7 @@ public class MainForm extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel14;
     private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel16;
+    private javax.swing.JLabel jLabel17;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -827,14 +928,16 @@ public class MainForm extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTabbedPane jTabbedPane6;
     private javax.swing.JComboBox<String> selectGrupoCombo;
+    private javax.swing.JComboBox<String> selectTurma;
     private javax.swing.JTable tableGrupo;
     private javax.swing.JTable tableTurma;
     private javax.swing.JTextField txtAceleracaoMedia;
     private javax.swing.JTextField txtAltitudeEjecao;
     private javax.swing.JTextField txtAltitudeMedia;
-    private javax.swing.JTextField txtAlunoNome1;
+    private javax.swing.JTextField txtAlunoNome;
     private javax.swing.JTextField txtDuracao;
     private javax.swing.JTextField txtGrupoNome;
+    private javax.swing.JTextField txtRMAluno;
     private javax.swing.JTextField txtTaxaDescida;
     private javax.swing.JTextField txtTempoApogeuDescida;
     private javax.swing.JTextField txtTempoEjecao;

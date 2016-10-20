@@ -9,23 +9,34 @@ package modelo;
  *
  * @author manolopina
  */
-public class Aluno  extends Turma {
+public class Aluno {
     
-    private String nome;
-    private Integer RM;
+    private String alunoNome;
+    private String turmaNome;
+    private int RM;
+    private String grupoNome;
     
-    public Aluno(String nomeTurma,String nome, Integer RM) {
-        super(nome);
-        this.nome = nome;
+    public Aluno(String turmaNome, String alunoNome, int RM, String grupoNome) {
+        this.alunoNome = alunoNome;
+        this.turmaNome = turmaNome;
+        this.grupoNome = grupoNome;
         this.RM = RM;
     }
-    
-    public String getNome() {
-        return this.nome;
+
+    public String getGrupoNome() {
+        return grupoNome;
+    }
+
+    public void setGrupoNome(String grupoNome) {
+        this.grupoNome = grupoNome;
     }
     
-    public void setNome(String nome) {
-        this.nome = nome;
+    public String getAlunoNome() {
+        return this.alunoNome;
+    }
+    
+    public void setAlunoNome(String alunoNome) {
+        this.alunoNome = alunoNome;
     }
 
     public Integer getRM() {
@@ -34,5 +45,13 @@ public class Aluno  extends Turma {
 
     public void setRM(Integer RM) {
         this.RM = RM;
+    }
+
+    public String getTurmaNome() {
+        return turmaNome;
+    }
+
+    public void setTurmaNome(String turmaNome) {
+        this.turmaNome = turmaNome;
     }
 }
