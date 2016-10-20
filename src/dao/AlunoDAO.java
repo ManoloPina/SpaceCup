@@ -6,6 +6,8 @@
 package dao;
 
 import conexao.Conexao;
+import java.awt.HeadlessException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
 import modelo.Aluno;
@@ -38,9 +40,13 @@ public class AlunoDAO extends DAO implements DaoInterface{
 
     @Override
     //Lista todos elementos da tabela
-    public ArrayList listar() {
+    public ArrayList<Aluno> listar() {
        
-        this.sql = "SELECT * FROM TURMA";
+        this.sql = "SELECT ALUNO.NOME, ALUNO.RM, TURMA.NOME, GRUPO.NOME FROM ALUNO "
+                + "INNER JOIN TURMA "
+                + "ON ALUNO.TURMA_ID=TURMA.ID "
+                + "INNER JOIN GRUPO "
+                + "ON ALUNO.GRUPO_ID=GRUPO.ID";
        
        ArrayList<Aluno> lista = new ArrayList();
        
@@ -49,7 +55,12 @@ public class AlunoDAO extends DAO implements DaoInterface{
             this.prepareStatment = this.connection.prepareStatement(sql);
             this.result = this.prepareStatment.executeQuery();    
             while(this.result.next()) {                
-//                lista.add(new Aluno(this.result.getString("NOME")));
+                lista.add(new Aluno(
+                        this.result.getString("TURMA.NOME"),
+                        this.result.getString("ALUNO.NOME"),
+                        this.result.getInt("ALUNO.RM"),
+                        this.result.getString("GRUPO.NOME")
+                ));
             }
         }catch(Exception e) {
            System.out.println(e.getMessage());
@@ -58,24 +69,36 @@ public class AlunoDAO extends DAO implements DaoInterface{
         return lista;
     }
 
-    public ArrayList pesquisar(Aluno aluno) {
+    public ArrayList<Aluno> pesquisar(Aluno aluno) {
         
-        this.sql = "SELECT * FROM TURMA WHERE NOME = ?";
+      this.sql = "SELECT (NOME) FROM ALUNO WHERE NOME LIKE ?";
         
-        ArrayList<Aluno> lista = new ArrayList();
+        this.sql = this.sql
+        .replace("!", "!!")
+        .replace("%", "!%")
+        .replace("_", "!_")
+        .replace("[", "![");
+       
+       ArrayList<Aluno> lista = new ArrayList();
+       
+        try {
+            this.connection = Conexao.getConnection();    
+            this.prepareStatment = this.connection.prepareStatement(sql);
+            this.prepareStatment.setString(1, "%" + aluno.getAlunoNome()+ "%");
+            this.result = this.prepareStatment.executeQuery();
+            while(this.result.next()) {                
+                lista.add(new Aluno(
+                        this.result.getString("TURMA.NOME"),
+                        this.result.getString("ALUNO.NOME"),
+                        this.result.getInt("ALUNO.RM"),
+                        this.result.getString("GRUPO.NOME")
+                ));
+            }
+        }catch(Exception e) {
+           System.out.println(e.getMessage());
+        }
         
-//        try {
-//           this.connection = Conexao.getConnection(); 
-//           this.prepareStatment = this.connection.prepareStatement(sql);
-//           this.prepareStatment.setString(1, turma.getNome());
-//           this.result = this.prepareStatment.executeQuery();
-//           while(this.result.next()) {
-//               lista.add(new Turma(turma.getNome()));
-//           }  
-//        }catch(Exception e) {
-//           System.out.println("Erro"+ e.getMessage());
-//        }
-     return lista;
+        return lista;
     }
     
     public void deletar(Aluno turma) {
@@ -94,6 +117,30 @@ public class AlunoDAO extends DAO implements DaoInterface{
         
     }
     
+    
+    public void alterar(Aluno aluno, int alunoRM) {
+        
+        int grupoId = this.getGrupoId(aluno);
+        int turmaId = this.getTurmaId(aluno);
+        
+        this.sql = "UPDATE ALUNO "
+                + "SET NOME=?, RM=?, TURMA_ID=?, GRUPO_ID=? "
+                + "WHERE RM=?";
+        
+        try {
+            this.connection = Conexao.getConnection();
+            this.prepareStatment = this.connection.prepareStatement(sql);
+            this.prepareStatment.setString(1, aluno.getAlunoNome());
+            this.prepareStatment.setInt(2, aluno.getRM());
+            this.prepareStatment.setInt(3, turmaId);
+            this.prepareStatment.setInt(4, grupoId);
+            this.prepareStatment.setInt(5, alunoRM);
+            this.prepareStatment.executeUpdate();
+        JOptionPane.showMessageDialog(null, "Grupo alterado com sucesso!");
+        }catch(SQLException | HeadlessException e) {
+            JOptionPane.showMessageDialog(null, e.getMessage());
+        }
+    }
     
     public int getTurmaId(Aluno aluno) {
         int turmaId = 0;

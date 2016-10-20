@@ -33,6 +33,7 @@ public class MainForm extends javax.swing.JFrame {
     AlunoDAO alunoDao = new AlunoDAO();
     String turmaSelecionada;
     String grupoSelecionado;
+    int rmSelecionado;
 
     /**
      * Creates new form MainForm
@@ -54,6 +55,17 @@ public class MainForm extends javax.swing.JFrame {
             public void valueChanged(ListSelectionEvent e) {
                 txtGrupoNome.setText(tableGrupo.getValueAt(tableGrupo.getSelectedRow(), 0).toString());
                 grupoSelecionado = tableGrupo.getValueAt(tableGrupo.getSelectedRow(), 0).toString();
+            }
+        });
+        
+        this.tableAluno.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                txtAlunoNome.setText(tableAluno.getValueAt(tableAluno.getSelectedRow(), 0).toString());
+                txtRMAluno.setText(tableAluno.getValueAt(tableAluno.getSelectedRow(), 1).toString());
+                rmSelecionado = Integer.parseInt(tableAluno.getValueAt(tableAluno.getSelectedRow(), 1).toString());
+                selectGrupoCombo.setSelectedItem(tableAluno.getValueAt(tableAluno.getSelectedRow(), 2).toString());
+                selectTurma.setSelectedItem(tableAluno.getValueAt(tableAluno.getSelectedRow(), 3).toString());
             }
         });
         
@@ -87,6 +99,17 @@ public class MainForm extends javax.swing.JFrame {
         }
     }
     
+    public void updateTableAluno() {
+        int i = 0;
+        for(Aluno aluno : this.alunoDao.listar()) {
+            this.tableAluno.getModel().setValueAt(aluno.getAlunoNome(), i, 0);
+            this.tableAluno.getModel().setValueAt(aluno.getRM().toString(), i, 1);
+            this.tableAluno.getModel().setValueAt(aluno.getTurmaNome(), i, 2);
+            this.tableAluno.getModel().setValueAt(aluno.getGrupoNome(), i, 3);this.tableAluno.getModel().setValueAt(aluno.getAlunoNome(), i, 0);
+            i++;
+        }
+    }
+    
     //Population select comboboxes
     public void updateSelectTurma() {
         int i = 0;
@@ -111,6 +134,7 @@ public class MainForm extends javax.swing.JFrame {
     public void updateTables() {
         this.updateTableTurma();
         this.updateTableGrupo();
+        this.updateTableAluno();
     }
 
     /**
@@ -156,6 +180,8 @@ public class MainForm extends javax.swing.JFrame {
         btnExcluirAluno = new javax.swing.JButton();
         jLabel17 = new javax.swing.JLabel();
         txtRMAluno = new javax.swing.JTextField();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        tableAluno = new javax.swing.JTable();
         jPanel4 = new javax.swing.JPanel();
         jLabel3 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
@@ -445,10 +471,139 @@ public class MainForm extends javax.swing.JFrame {
         });
 
         btnAlterarAluno.setText("Alterar");
+        btnAlterarAluno.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAlterarAlunoActionPerformed(evt);
+            }
+        });
 
         btnExcluirAluno.setText("Excluir");
 
         jLabel17.setText("RM Aluno");
+
+        tableAluno.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Aluno", "RM", "Turma", "Grupo"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        jScrollPane3.setViewportView(tableAluno);
 
         javax.swing.GroupLayout jPanel5Layout = new javax.swing.GroupLayout(jPanel5);
         jPanel5.setLayout(jPanel5Layout);
@@ -457,35 +612,39 @@ public class MainForm extends javax.swing.JFrame {
             .addGroup(jPanel5Layout.createSequentialGroup()
                 .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel5Layout.createSequentialGroup()
-                        .addGap(18, 18, 18)
-                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                .addGroup(jPanel5Layout.createSequentialGroup()
-                                    .addComponent(jLabel4)
-                                    .addGap(18, 18, 18)
-                                    .addComponent(txtAlunoNome, javax.swing.GroupLayout.PREFERRED_SIZE, 311, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGroup(jPanel5Layout.createSequentialGroup()
-                                    .addComponent(jLabel6)
-                                    .addGap(18, 18, 18)
-                                    .addComponent(selectGrupoCombo, javax.swing.GroupLayout.PREFERRED_SIZE, 306, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
-                                    .addComponent(jLabel17)
-                                    .addGap(18, 18, 18)
-                                    .addComponent(txtRMAluno, javax.swing.GroupLayout.PREFERRED_SIZE, 311, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel5Layout.createSequentialGroup()
-                                .addComponent(jLabel5)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(selectTurma, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
-                    .addGroup(jPanel5Layout.createSequentialGroup()
-                        .addContainerGap()
-                        .addComponent(btnCadastrarAluno)
-                        .addGap(18, 18, 18)
-                        .addComponent(btnAlterarAluno)
-                        .addGap(18, 18, 18)
-                        .addComponent(btnExcluirAluno)
-                        .addGap(18, 18, 18)
-                        .addComponent(btnPesquisarAluno)))
-                .addContainerGap(328, Short.MAX_VALUE))
+                                .addGap(18, 18, 18)
+                                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addGroup(jPanel5Layout.createSequentialGroup()
+                                            .addComponent(jLabel4)
+                                            .addGap(18, 18, 18)
+                                            .addComponent(txtAlunoNome, javax.swing.GroupLayout.PREFERRED_SIZE, 311, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addGroup(jPanel5Layout.createSequentialGroup()
+                                            .addComponent(jLabel6)
+                                            .addGap(18, 18, 18)
+                                            .addComponent(selectGrupoCombo, javax.swing.GroupLayout.PREFERRED_SIZE, 306, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel5Layout.createSequentialGroup()
+                                            .addComponent(jLabel17)
+                                            .addGap(18, 18, 18)
+                                            .addComponent(txtRMAluno, javax.swing.GroupLayout.PREFERRED_SIZE, 311, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                    .addGroup(jPanel5Layout.createSequentialGroup()
+                                        .addComponent(jLabel5)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addComponent(selectTurma, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                            .addGroup(jPanel5Layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(btnCadastrarAluno)
+                                .addGap(18, 18, 18)
+                                .addComponent(btnAlterarAluno)
+                                .addGap(18, 18, 18)
+                                .addComponent(btnExcluirAluno)
+                                .addGap(18, 18, 18)
+                                .addComponent(btnPesquisarAluno)))
+                        .addGap(0, 0, Short.MAX_VALUE))
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 769, Short.MAX_VALUE))
+                .addContainerGap())
         );
         jPanel5Layout.setVerticalGroup(
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -512,7 +671,9 @@ public class MainForm extends javax.swing.JFrame {
                     .addComponent(btnPesquisarAluno)
                     .addComponent(btnAlterarAluno)
                     .addComponent(btnExcluirAluno))
-                .addContainerGap(211, Short.MAX_VALUE))
+                .addGap(33, 33, 33)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 295, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(116, Short.MAX_VALUE))
         );
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
@@ -529,7 +690,7 @@ public class MainForm extends javax.swing.JFrame {
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(jPanel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(134, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         jTabbedPane6.addTab("Aluno", jPanel3);
@@ -841,16 +1002,36 @@ public class MainForm extends javax.swing.JFrame {
     }//GEN-LAST:event_selectTurmaActionPerformed
 
     private void btnCadastrarAlunoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCadastrarAlunoActionPerformed
-        // TODO add your handling code here:        
-        this.alunoDao.inserir(new Aluno(
-                this.selectTurma.getSelectedItem().toString(), 
-                txtAlunoNome.getText(), 
-                Integer.parseInt(txtRMAluno.getText()), 
-                this.selectGrupoCombo.getSelectedItem().toString())
-        );
+        // TODO add your handling code here: 
+        try {
+            this.alunoDao.inserir(new Aluno(
+                    this.selectTurma.getSelectedItem().toString(), 
+                    txtAlunoNome.getText(), 
+                    Integer.parseInt(txtRMAluno.getText()), 
+                    this.selectGrupoCombo.getSelectedItem().toString())
+            );    
+        }catch(Exception e) {
+            JOptionPane.showMessageDialog(null, e.getMessage());
+        }
+        
         this.updateTables();
         this.updateComboBoxes();
     }//GEN-LAST:event_btnCadastrarAlunoActionPerformed
+
+    private void btnAlterarAlunoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAlterarAlunoActionPerformed
+        // TODO add your handling code here:
+        try {
+            this.alunoDao.alterar(new Aluno(
+                    this.selectTurma.getSelectedItem().toString(),
+                    this.txtAlunoNome.getText(),
+                    Integer.parseInt(this.txtRMAluno.getText()),
+                    this.selectGrupoCombo.getSelectedItem().toString()
+            ), this.rmSelecionado);
+        }catch(Exception e) {
+            JOptionPane.showMessageDialog(null, e.getMessage());
+        }
+        this.updateTables();
+    }//GEN-LAST:event_btnAlterarAlunoActionPerformed
 
     /**
      * @param args the command line arguments
@@ -926,9 +1107,11 @@ public class MainForm extends javax.swing.JFrame {
     private javax.swing.JProgressBar jProgressBar1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JTabbedPane jTabbedPane6;
     private javax.swing.JComboBox<String> selectGrupoCombo;
     private javax.swing.JComboBox<String> selectTurma;
+    private javax.swing.JTable tableAluno;
     private javax.swing.JTable tableGrupo;
     private javax.swing.JTable tableTurma;
     private javax.swing.JTextField txtAceleracaoMedia;
