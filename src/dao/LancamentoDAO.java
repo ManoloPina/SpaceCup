@@ -5,6 +5,7 @@
  */
 package dao;
 import conexao.Conexao;
+import java.awt.HeadlessException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Time;
@@ -29,8 +30,7 @@ public class LancamentoDAO extends DAO implements DaoInterface {
         
         int grupoId = this.getGrupoId(grupo);
         
-        Date tempoApogeu = new SimpleDateFormat("HH:mm").parse(lancamento.getTempoApogeuDescida());
-        
+        System.out.println("grupo id"+ grupoId);
         
         this.sql = "INSERT INTO LANCAMENTO_FOGUETE ("
                 + "ALTITUDE_MEDIA, VELOCIDADE_MAXIMA, TAXA_DESCIDA, TEMPO_APOGEU_DESCIDA, "
@@ -43,7 +43,7 @@ public class LancamentoDAO extends DAO implements DaoInterface {
             this.prepareStatment.setDouble(1, lancamento.getAltitudeMedia());
             this.prepareStatment.setDouble(2, lancamento.getVelocidadeMaxima());
             this.prepareStatment.setDouble(3, lancamento.getTaxaDescida());
-            this.prepareStatment.setTime(4, java.sql.Time.valueOf(tempoApogeu.getTime()));
+            this.prepareStatment.setString(4, lancamento.getTempoApogeuDescida());
             this.prepareStatment.setDouble(5, lancamento.getPicoAceleracao());
             this.prepareStatment.setDouble(6, lancamento.getAceleracaoMedia());
             this.prepareStatment.setString(7, lancamento.getTempoPropulsao());
@@ -62,11 +62,10 @@ public class LancamentoDAO extends DAO implements DaoInterface {
     //Lista todos elementos da tabela
     public ArrayList<Lancamento> listar() {
        
-        this.sql = "SELECT ALUNO.NOME, ALUNO.RM, TURMA.NOME, GRUPO.NOME FROM ALUNO "
-                + "INNER JOIN TURMA "
-                + "ON ALUNO.TURMA_ID=TURMA.ID "
-                + "INNER JOIN GRUPO "
-                + "ON ALUNO.GRUPO_ID=GRUPO.ID";
+        this.sql = "SELECT ALTITUDE_MEDIA, VELOCIDADE_MAXIMA, TAXA_DESCIDA, TEMPO_APOGEU_DESCIDA, PICO_ACELERACAO, ACELERACAO_MEDIA, TEMPO_PROPULSAO, TEMPO_EJECAO, ALTITUDE_EJECAO, DURACAO, GRUPO.NOME "
+        +"FROM lancamento_foguete "
+        +"INNER JOIN grupo "
+        +"ON lancamento_foguete.GRUPO_ID=grupo.ID;";
        
        ArrayList<Lancamento> lista = new ArrayList();
        
@@ -75,12 +74,19 @@ public class LancamentoDAO extends DAO implements DaoInterface {
             this.prepareStatment = this.connection.prepareStatement(sql);
             this.result = this.prepareStatment.executeQuery();    
             while(this.result.next()) {                
-//                lista.add(new Lancamento(
-//                        this.result.getString("TURMA.NOME"),
-//                        this.result.getString("ALUNO.NOME"),
-//                        this.result.getInt("ALUNO.RM"),
-//                        this.result.getString("GRUPO.NOME")
-//                ));
+                lista.add(new Lancamento(
+                        this.result.getDouble("LANCAMENTO_FOGUETE.ALTITUDE_MEDIA"),
+                        this.result.getDouble("LANCAMENTO_FOGUETE.VELOCIDADE_MAXIMA"),
+                        this.result.getDouble("LANCAMENTO_FOGUETE.TAXA_DESCIDA"),
+                        this.result.getString("LANCAMENTO_FOGUETE.TEMPO_APOGEU_DESCIDA"),
+                        this.result.getDouble("LANCAMENTO_FOGUETE.PICO_ACELERACAO"),
+                        this.result.getDouble("LANCAMENTO_FOGUETE.ACELERACAO_MEDIA"),
+                        this.result.getString("LANCAMENTO_FOGUETE.TEMPO_PROPULSAO"),
+                        this.result.getString("LANCAMENTO_FOGUETE.TEMPO_EJECAO"),
+                        this.result.getDouble("LANCAMENTO_FOGUETE.ALTITUDE_EJECAO"),
+                        this.result.getString("LANCAMENTO_FOGUETE.DURACAO"),
+                        this.result.getString("GRUPO.NOME")
+                ));
             }
         }catch(Exception e) {
            System.out.println(e.getMessage());
@@ -121,14 +127,16 @@ public class LancamentoDAO extends DAO implements DaoInterface {
         return lista;
     }
     
-    public void deletar(int rm) {
+    public void deletar(String grupo) {
         
-        this.sql = "DELETE FROM ALUNO WHERE RM = ?";
+        int grupoId = this.getGrupoId(grupo);
+        
+        this.sql = "DELETE FROM LANCAMENTO_FOGUETE WHERE GRUPO_ID = ?";
         
         try {
             this.connection = Conexao.getConnection();
             this.prepareStatment = this.connection.prepareStatement(sql);
-            this.prepareStatment.setInt(1, rm);
+            this.prepareStatment.setInt(1, grupoId);
             this.prepareStatment.executeUpdate();
         }catch(Exception e) {
             System.out.println("Erro: "+e.getMessage());
@@ -140,28 +148,38 @@ public class LancamentoDAO extends DAO implements DaoInterface {
         
         int grupoId = this.getGrupoId(grupo);
         
-        this.sql = "UPDATE ALUNO "
-                + "SET NOME=?, RM=?, TURMA_ID=?, GRUPO_ID=? "
-                + "WHERE RM=?";
+        this.sql = "UPDATE LANCAMENTO_FOGUETE " 
+            +"SET NOME =  ?, ALTITUDE_MEDIA = ?, VELOCIDADE_MAXIMA = ?, TAXA_DESCIDA = ?,"
+            +"TEMPO_APOGEU_DESCIDA = ?, PICO_ACELERACAO = ?, ACELERACAO_MEDIA = ?, "
+            +"TEMPO_PROPULSAO = ?, TEMPO_EJECAO = ?, ALTITUDE_EJECAO = ?, DURACAO = ?,"
+            +"WHERE GRUPO_ID = ?;";
         
-//        try {
-//            this.connection = Conexao.getConnection();
-//            this.prepareStatment = this.connection.prepareStatement(sql);
-//            this.prepareStatment.setString(1, a.getAlunoNome());
-//            this.prepareStatment.setInt(2, aluno.getRM());
-//            this.prepareStatment.setInt(3, turmaId);
-//            this.prepareStatment.setInt(4, grupoId);
-//            this.prepareStatment.setInt(5, alunoRM);
-//            this.prepareStatment.executeUpdate();
-//        JOptionPane.showMessageDialog(null, "Grupo alterado com sucesso!");
-//        }catch(SQLException | HeadlessException e) {
-//            JOptionPane.showMessageDialog(null, e.getMessage());
-//        }
+        try {
+            this.connection = Conexao.getConnection();
+            this.prepareStatment = this.connection.prepareStatement(sql);
+            this.prepareStatment.setDouble(1, lancamento.getAltitudeMedia());
+            this.prepareStatment.setDouble(2, lancamento.getVelocidadeMaxima());
+            this.prepareStatment.setDouble(3, lancamento.getTaxaDescida());
+            this.prepareStatment.setString(4, lancamento.getTempoApogeuDescida());
+            this.prepareStatment.setDouble(5, lancamento.getPicoAceleracao());
+            this.prepareStatment.setDouble(6, lancamento.getAceleracaoMedia());
+            this.prepareStatment.setString(7, lancamento.getTempoPropulsao());
+            this.prepareStatment.setString(8, lancamento.getTempoEjecao());
+            this.prepareStatment.setDouble(9, lancamento.getAltitudeEjecao());
+            this.prepareStatment.setString(10, lancamento.getDuracaoVoo());
+            this.prepareStatment.setInt(11, grupoId);
+            this.prepareStatment.executeUpdate();
+        JOptionPane.showMessageDialog(null, "Grupo alterado com sucesso!");
+        }catch(SQLException | HeadlessException e) {
+            JOptionPane.showMessageDialog(null, e.getMessage());
+        }
     }
     
 
     public int getGrupoId(String grupo) {
+        
         int grupoId = 0;
+        
         this.sql = "SELECT ID FROM GRUPO WHERE NOME = ?";
         try {
            this.connection = Conexao.getConnection(); 

@@ -23,6 +23,7 @@ public class Lancamento {
     private String tempoEjecao;
     private double altitudeEjecao;
     private String duracaoVoo;
+    private String grupoNome; 
 
     public Lancamento(
             double altitudeMedia, 
@@ -47,6 +48,33 @@ public class Lancamento {
         this.altitudeEjecao = altitudeEjecao;
         this.duracaoVoo = duracaoVoo;
     }
+    
+        public Lancamento(
+            double altitudeMedia, 
+            double velocidadeMaxima, 
+            double taxaDescida, 
+            String tempoApogeuDescida, 
+            double picoAceleracao, 
+            double aceleracaoMedia, 
+            String tempoPropulsao, 
+            String tempoEjecao, 
+            double altitudeEjecao, 
+            String duracaoVoo,
+            String grupoNome
+    ) {
+        this.altitudeMedia = altitudeMedia;
+        this.velocidadeMaxima = velocidadeMaxima;
+        this.taxaDescida = taxaDescida;
+        this.tempoApogeuDescida = tempoApogeuDescida;
+        this.picoAceleracao = picoAceleracao;
+        this.aceleracaoMedia = aceleracaoMedia;
+        this.tempoPropulsao = tempoPropulsao;
+        this.tempoEjecao = tempoEjecao;
+        this.altitudeEjecao = altitudeEjecao;
+        this.duracaoVoo = duracaoVoo;
+        this.grupoNome = grupoNome;
+    }
+
 
     public double getAltitudeMedia() {
         return altitudeMedia;
@@ -127,9 +155,14 @@ public class Lancamento {
     public void setDuracaoVoo(String duracaoVoo) {
         this.duracaoVoo = duracaoVoo;
     }
-    
-    
-    
+
+    public String getGrupoNome() {
+        return grupoNome;
+    }
+
+    public void setGrupoNome(String grupoNome) {
+        this.grupoNome = grupoNome;
+    }
     
     
     
