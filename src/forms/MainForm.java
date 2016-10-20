@@ -460,6 +460,11 @@ public class MainForm extends javax.swing.JFrame {
         });
 
         btnPesquisarAluno.setText("Pesquisar");
+        btnPesquisarAluno.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnPesquisarAlunoActionPerformed(evt);
+            }
+        });
 
         jLabel6.setText("Selecionar grupo");
 
@@ -478,6 +483,11 @@ public class MainForm extends javax.swing.JFrame {
         });
 
         btnExcluirAluno.setText("Excluir");
+        btnExcluirAluno.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnExcluirAlunoActionPerformed(evt);
+            }
+        });
 
         jLabel17.setText("RM Aluno");
 
@@ -1032,6 +1042,24 @@ public class MainForm extends javax.swing.JFrame {
         }
         this.updateTables();
     }//GEN-LAST:event_btnAlterarAlunoActionPerformed
+
+    private void btnExcluirAlunoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnExcluirAlunoActionPerformed
+        // TODO add your handling code here:
+        try {
+            this.alunoDao.deletar(this.rmSelecionado);    
+            this.updateComboBoxes();
+            this.updateTables();
+        }catch(Exception e) {
+            JOptionPane.showMessageDialog(null, e.getMessage());
+        }
+        JOptionPane.showMessageDialog(null, "Aluno excluído");
+        
+    }//GEN-LAST:event_btnExcluirAlunoActionPerformed
+
+    private void btnPesquisarAlunoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPesquisarAlunoActionPerformed
+        // TODO add your handling code here:
+        this.tableAluno.setModel(DbUtils.resultSetToTableModel(this.alunoDao.pesquisarTable(this.txtAlunoNome.getText())));
+    }//GEN-LAST:event_btnPesquisarAlunoActionPerformed
 
     /**
      * @param args the command line arguments

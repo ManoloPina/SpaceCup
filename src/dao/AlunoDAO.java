@@ -7,6 +7,7 @@ package dao;
 
 import conexao.Conexao;
 import java.awt.HeadlessException;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import javax.swing.JOptionPane;
@@ -101,20 +102,18 @@ public class AlunoDAO extends DAO implements DaoInterface{
         return lista;
     }
     
-    public void deletar(Aluno turma) {
+    public void deletar(int rm) {
         
-//        this.sql = "DELETE FROM TURMA WHERE NOME = ?";
-//        
-//        try {
-//            this.connection = Conexao.getConnection();
-//            this.prepareStatment = this.connection.prepareStatement(sql);
-//            this.prepareStatment.setString(1, turma.getNome());
-//            this.prepareStatment.executeUpdate();
-//        }catch(Exception e) {
-//            System.out.println("Erro: "+e.getMessage());
-//        }
+        this.sql = "DELETE FROM ALUNO WHERE RM = ?";
         
-        
+        try {
+            this.connection = Conexao.getConnection();
+            this.prepareStatment = this.connection.prepareStatement(sql);
+            this.prepareStatment.setInt(1, rm);
+            this.prepareStatment.executeUpdate();
+        }catch(Exception e) {
+            System.out.println("Erro: "+e.getMessage());
+        }
     }
     
     
@@ -174,5 +173,34 @@ public class AlunoDAO extends DAO implements DaoInterface{
             JOptionPane.showMessageDialog(null, e.getMessage());
         }
         return grupoId;
+    }
+    
+    public ResultSet pesquisarTable(String alunoNome) {
+        this.sql = "SELECT ALUNO.NOME, ALUNO.RM, TURMA.NOME, GRUPO.NOME FROM ALUNO "
+                + "INNER JOIN TURMA "
+                + "ON ALUNO.TURMA_ID=TURMA.ID "
+                + "INNER JOIN GRUPO "
+                + "ON ALUNO.GRUPO_ID=GRUPO.ID "
+                + "WHERE ALUNO.NOME LIKE ?";
+                
+        
+        this.sql = this.sql
+        .replace("!", "!!")
+        .replace("%", "!%")
+        .replace("[", "![");
+        
+        ResultSet tableListResult = null;
+        
+        try {
+            this.connection = Conexao.getConnection();
+            this.prepareStatment = this.connection.prepareStatement(sql);
+            this.prepareStatment.setString(1, "%" + alunoNome + "%");
+            tableListResult = this.prepareStatment.executeQuery();
+            System.out.println(tableListResult);
+        }catch(Exception e) {
+            JOptionPane.showMessageDialog(null, e.getMessage());
+        }
+        
+        return tableListResult;
     }
 }
