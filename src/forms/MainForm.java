@@ -7,11 +7,17 @@ package forms;
 
 import dao.AlunoDAO;
 import dao.GrupoDAO;
+import dao.LancamentoDAO;
 import dao.TurmaDAO;
+import java.awt.HeadlessException;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.sql.SQLException;
+import java.time.LocalTime;
+import java.sql.Time;
+import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Date;
 import javax.swing.JOptionPane;
 import javax.swing.JTable;
 import javax.swing.event.ListSelectionEvent;
@@ -19,6 +25,7 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.plaf.basic.BasicListUI;
 import modelo.Aluno;
 import modelo.Grupo;
+import modelo.Lancamento;
 import modelo.Turma;
 import net.proteanit.sql.DbUtils;
 
@@ -31,6 +38,7 @@ public class MainForm extends javax.swing.JFrame {
     TurmaDAO turmaDao = new TurmaDAO();
     GrupoDAO grupoDao  = new GrupoDAO();
     AlunoDAO alunoDao = new AlunoDAO();
+    LancamentoDAO lancamentoDao = new LancamentoDAO();
     String turmaSelecionada;
     String grupoSelecionado;
     int rmSelecionado;
@@ -125,10 +133,18 @@ public class MainForm extends javax.swing.JFrame {
         }
     }
     
+    public void updateSelectGrupoLancamento() {
+        int i = 0;
+        for(Grupo grupo : this.grupoDao.listar()) {
+            this.selectLancamentoGrupo.addItem(grupo.getNome());
+        }
+    }
+    
     
     public void updateComboBoxes() {
         this.updateSelectTurma();
         this.updateSelectGrupo();
+        this.updateSelectGrupoLancamento();
     }
     
     public void updateTables() {
@@ -203,7 +219,17 @@ public class MainForm extends javax.swing.JFrame {
         jLabel15 = new javax.swing.JLabel();
         txtDuracao = new javax.swing.JTextField();
         jLabel16 = new javax.swing.JLabel();
-        jComboBox1 = new javax.swing.JComboBox<>();
+        selectLancamentoGrupo = new javax.swing.JComboBox<>();
+        btnCadastrarLancamento = new javax.swing.JButton();
+        btnPesquisarLancamento = new javax.swing.JButton();
+        btnExcluirLancamento = new javax.swing.JButton();
+        btnAlterarLancamento = new javax.swing.JButton();
+        jLabel18 = new javax.swing.JLabel();
+        txtVelocidadeMaxima = new javax.swing.JTextField();
+        jLabel19 = new javax.swing.JLabel();
+        txtAltitudeMaxima = new javax.swing.JTextField();
+        jLabel20 = new javax.swing.JLabel();
+        txtPicoAceleracao = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -302,7 +328,7 @@ public class MainForm extends javax.swing.JFrame {
                             .addComponent(btnExcluirTurma)
                             .addGap(18, 18, 18)
                             .addComponent(btnPesquisarTurma))))
-                .addContainerGap(22, Short.MAX_VALUE))
+                .addContainerGap(231, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -319,7 +345,7 @@ public class MainForm extends javax.swing.JFrame {
                     .addComponent(btnExcluirTurma))
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 254, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(202, Short.MAX_VALUE))
+                .addContainerGap(557, Short.MAX_VALUE))
         );
 
         jTabbedPane6.addTab("Turma", jPanel1);
@@ -413,7 +439,7 @@ public class MainForm extends javax.swing.JFrame {
                         .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(jPanel2Layout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 770, Short.MAX_VALUE)))
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 979, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
@@ -431,7 +457,7 @@ public class MainForm extends javax.swing.JFrame {
                     .addComponent(btnExcluirGrupo))
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(43, Short.MAX_VALUE))
+                .addContainerGap(398, Short.MAX_VALUE))
         );
 
         jTabbedPane6.addTab("Grupo", jPanel2);
@@ -781,7 +807,44 @@ public class MainForm extends javax.swing.JFrame {
 
         jLabel16.setText("Lançamento pelo grupo:");
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        selectLancamentoGrupo.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Selecionar..." }));
+
+        btnCadastrarLancamento.setText("Cadastrar");
+        btnCadastrarLancamento.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCadastrarLancamentoActionPerformed(evt);
+            }
+        });
+
+        btnPesquisarLancamento.setText("Pesquisar");
+
+        btnExcluirLancamento.setText("Excluir");
+
+        btnAlterarLancamento.setText("Altarar");
+
+        jLabel18.setText("Velocidade maxima");
+
+        txtVelocidadeMaxima.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtVelocidadeMaximaActionPerformed(evt);
+            }
+        });
+
+        jLabel19.setText("Altitude máxima");
+
+        txtAltitudeMaxima.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtAltitudeMaximaActionPerformed(evt);
+            }
+        });
+
+        jLabel20.setText("Pico aceleração");
+
+        txtPicoAceleracao.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtPicoAceleracaoActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
@@ -790,85 +853,136 @@ public class MainForm extends javax.swing.JFrame {
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel3)
-                    .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addComponent(jLabel10)
-                        .addGap(29, 29, 29)
-                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(txtAceleracaoMedia, javax.swing.GroupLayout.PREFERRED_SIZE, 214, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtTempoApogeuDescida, javax.swing.GroupLayout.PREFERRED_SIZE, 214, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                    .addComponent(jLabel11)
-                    .addComponent(jLabel12)
-                    .addComponent(jLabel13)
-                    .addComponent(jLabel14)
-                    .addComponent(jLabel15)
-                    .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addGap(212, 212, 212)
-                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(txtTempoPropulsao, javax.swing.GroupLayout.PREFERRED_SIZE, 214, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtTempoEjecao, javax.swing.GroupLayout.PREFERRED_SIZE, 214, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtAltitudeEjecao, javax.swing.GroupLayout.PREFERRED_SIZE, 214, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtDuracao, javax.swing.GroupLayout.PREFERRED_SIZE, 214, javax.swing.GroupLayout.PREFERRED_SIZE)))
                     .addGroup(jPanel4Layout.createSequentialGroup()
                         .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel8)
-                            .addComponent(jLabel9)
-                            .addComponent(jLabel7)
-                            .addComponent(jLabel16))
-                        .addGap(60, 60, 60)
-                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(txtAltitudeMedia)
-                            .addComponent(txtTaxaDescida, javax.swing.GroupLayout.DEFAULT_SIZE, 214, Short.MAX_VALUE)
-                            .addComponent(txtVelocidadeMedia, javax.swing.GroupLayout.DEFAULT_SIZE, 214, Short.MAX_VALUE)
-                            .addComponent(jComboBox1, 0, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
-                .addContainerGap(350, Short.MAX_VALUE))
+                            .addGroup(jPanel4Layout.createSequentialGroup()
+                                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(txtAceleracaoMedia, javax.swing.GroupLayout.PREFERRED_SIZE, 214, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel4Layout.createSequentialGroup()
+                                        .addComponent(jLabel9)
+                                        .addGap(111, 111, 111)
+                                        .addComponent(txtTaxaDescida, javax.swing.GroupLayout.PREFERRED_SIZE, 214, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addGap(18, 18, 18)
+                                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addGroup(jPanel4Layout.createSequentialGroup()
+                                        .addComponent(jLabel10)
+                                        .addGap(29, 29, 29)
+                                        .addComponent(txtTempoApogeuDescida))
+                                    .addGroup(jPanel4Layout.createSequentialGroup()
+                                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                            .addComponent(jLabel12)
+                                            .addGroup(jPanel4Layout.createSequentialGroup()
+                                                .addGap(212, 212, 212)
+                                                .addComponent(txtTempoPropulsao, javax.swing.GroupLayout.PREFERRED_SIZE, 214, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                        .addGap(0, 0, Short.MAX_VALUE))))
+                            .addGroup(jPanel4Layout.createSequentialGroup()
+                                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel15)
+                                    .addGroup(jPanel4Layout.createSequentialGroup()
+                                        .addGap(212, 212, 212)
+                                        .addComponent(txtDuracao, javax.swing.GroupLayout.PREFERRED_SIZE, 214, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addGap(18, 18, 18)
+                                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel20)
+                                    .addGroup(jPanel4Layout.createSequentialGroup()
+                                        .addGap(212, 212, 212)
+                                        .addComponent(txtPicoAceleracao, javax.swing.GroupLayout.PREFERRED_SIZE, 214, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                .addGap(0, 0, Short.MAX_VALUE)))
+                        .addGap(115, 115, 115))
+                    .addGroup(jPanel4Layout.createSequentialGroup()
+                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel3)
+                            .addGroup(jPanel4Layout.createSequentialGroup()
+                                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel7)
+                                    .addComponent(jLabel16)
+                                    .addComponent(jLabel18))
+                                .addGap(60, 60, 60)
+                                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                    .addComponent(txtVelocidadeMaxima)
+                                    .addComponent(txtAltitudeMedia, javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(selectLancamentoGrupo, javax.swing.GroupLayout.Alignment.LEADING, 0, 214, Short.MAX_VALUE))
+                                .addGap(18, 18, 18)
+                                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel19)
+                                    .addComponent(jLabel8))
+                                .addGap(102, 102, 102)
+                                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(txtVelocidadeMedia, javax.swing.GroupLayout.PREFERRED_SIZE, 214, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(txtAltitudeMaxima, javax.swing.GroupLayout.PREFERRED_SIZE, 214, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addComponent(jLabel11)
+                            .addComponent(jLabel13)
+                            .addGroup(jPanel4Layout.createSequentialGroup()
+                                .addGap(212, 212, 212)
+                                .addComponent(txtTempoEjecao, javax.swing.GroupLayout.PREFERRED_SIZE, 214, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(18, 18, 18)
+                                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel14)
+                                    .addGroup(jPanel4Layout.createSequentialGroup()
+                                        .addGap(212, 212, 212)
+                                        .addComponent(txtAltitudeEjecao, javax.swing.GroupLayout.PREFERRED_SIZE, 214, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                            .addGroup(jPanel4Layout.createSequentialGroup()
+                                .addComponent(btnCadastrarLancamento)
+                                .addGap(18, 18, 18)
+                                .addComponent(btnAlterarLancamento)
+                                .addGap(18, 18, 18)
+                                .addComponent(btnExcluirLancamento)
+                                .addGap(18, 18, 18)
+                                .addComponent(btnPesquisarLancamento)))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addGap(21, 21, 21)
                 .addComponent(jLabel3)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 37, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel16)
-                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(selectLancamentoGrupo, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel7)
-                    .addComponent(txtAltitudeMedia, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtAltitudeMedia, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel19)
+                    .addComponent(txtAltitudeMaxima, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel18)
+                    .addComponent(txtVelocidadeMaxima, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel8)
                     .addComponent(txtVelocidadeMedia, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel9)
-                    .addComponent(txtTaxaDescida, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtTaxaDescida, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel10)
                     .addComponent(txtTempoApogeuDescida, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel11)
-                    .addComponent(txtAceleracaoMedia, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtAceleracaoMedia, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel12)
                     .addComponent(txtTempoPropulsao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel13)
-                    .addComponent(txtTempoEjecao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
-                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(txtTempoEjecao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel14)
                     .addComponent(txtAltitudeEjecao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel15)
-                    .addComponent(txtDuracao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(75, 75, 75))
+                    .addComponent(txtDuracao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel20)
+                    .addComponent(txtPicoAceleracao, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
+                .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnCadastrarLancamento)
+                    .addComponent(btnPesquisarLancamento)
+                    .addComponent(btnAlterarLancamento)
+                    .addComponent(btnExcluirLancamento))
+                .addContainerGap(534, Short.MAX_VALUE))
         );
 
         jTabbedPane6.addTab("Dados de lançamento", jPanel4);
@@ -879,15 +993,15 @@ public class MainForm extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jTabbedPane6, javax.swing.GroupLayout.PREFERRED_SIZE, 803, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(19, Short.MAX_VALUE))
+                .addComponent(jTabbedPane6)
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(21, 21, 21)
-                .addComponent(jTabbedPane6, javax.swing.GroupLayout.PREFERRED_SIZE, 618, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(63, Short.MAX_VALUE))
+                .addComponent(jTabbedPane6, javax.swing.GroupLayout.PREFERRED_SIZE, 973, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(30, Short.MAX_VALUE))
         );
 
         jTabbedPane6.getAccessibleContext().setAccessibleName("Dados Lançamento");
@@ -1019,13 +1133,13 @@ public class MainForm extends javax.swing.JFrame {
                     txtAlunoNome.getText(), 
                     Integer.parseInt(txtRMAluno.getText()), 
                     this.selectGrupoCombo.getSelectedItem().toString())
-            );    
+            );
+            JOptionPane.showMessageDialog(null, "Aluno cadastrado!");
+            this.updateTables();
+            this.updateComboBoxes();
         }catch(Exception e) {
             JOptionPane.showMessageDialog(null, e.getMessage());
         }
-        
-        this.updateTables();
-        this.updateComboBoxes();
     }//GEN-LAST:event_btnCadastrarAlunoActionPerformed
 
     private void btnAlterarAlunoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAlterarAlunoActionPerformed
@@ -1060,6 +1174,42 @@ public class MainForm extends javax.swing.JFrame {
         // TODO add your handling code here:
         this.tableAluno.setModel(DbUtils.resultSetToTableModel(this.alunoDao.pesquisarTable(this.txtAlunoNome.getText())));
     }//GEN-LAST:event_btnPesquisarAlunoActionPerformed
+
+    private void btnCadastrarLancamentoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCadastrarLancamentoActionPerformed
+        // TODO add your handling code here:
+        try {
+            Lancamento lancamento = new Lancamento(
+                    Double.parseDouble(this.txtAltitudeMedia.getText()),
+                    Double.parseDouble(this.txtVelocidadeMaxima.getText()),
+                    Double.parseDouble(this.txtTaxaDescida.getText()),
+                    this.txtTempoApogeuDescida.toString(),
+                    Double.parseDouble(this.txtPicoAceleracao.getText()),
+                    Double.parseDouble(this.txtAceleracaoMedia.getText()),
+                    this.txtTempoPropulsao.toString(),
+                    this.txtTempoEjecao.toString(),
+                    Double.parseDouble(this.txtAltitudeEjecao.getText()),
+                    this.txtDuracao.toString()
+            );
+            this.lancamentoDao.inserir(lancamento, this.selectGrupoCombo.getSelectedItem().toString());
+            JOptionPane.showMessageDialog(null, "Aluno cadastrado!");
+            this.updateTables();
+            this.updateComboBoxes();
+        }catch(NumberFormatException | ParseException | HeadlessException e) {
+            JOptionPane.showMessageDialog(null, e.getMessage());
+        }
+    }//GEN-LAST:event_btnCadastrarLancamentoActionPerformed
+
+    private void txtVelocidadeMaximaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtVelocidadeMaximaActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtVelocidadeMaximaActionPerformed
+
+    private void txtAltitudeMaximaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtAltitudeMaximaActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtAltitudeMaximaActionPerformed
+
+    private void txtPicoAceleracaoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtPicoAceleracaoActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtPicoAceleracaoActionPerformed
 
     /**
      * @param args the command line arguments
@@ -1099,17 +1249,20 @@ public class MainForm extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnAlterarAluno;
     private javax.swing.JButton btnAlterarGrupo;
+    private javax.swing.JButton btnAlterarLancamento;
     private javax.swing.JButton btnAlterarTurma;
     private javax.swing.JButton btnCadastrarAluno;
     private javax.swing.JButton btnCadastrarGrupo;
+    private javax.swing.JButton btnCadastrarLancamento;
     private javax.swing.JButton btnCadastrarTurma;
     private javax.swing.JButton btnExcluirAluno;
     private javax.swing.JButton btnExcluirGrupo;
+    private javax.swing.JButton btnExcluirLancamento;
     private javax.swing.JButton btnExcluirTurma;
     private javax.swing.JButton btnPesquisarAluno;
     private javax.swing.JButton btnPesquisarGrupo;
+    private javax.swing.JButton btnPesquisarLancamento;
     private javax.swing.JButton btnPesquisarTurma;
-    private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
@@ -1119,7 +1272,10 @@ public class MainForm extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel15;
     private javax.swing.JLabel jLabel16;
     private javax.swing.JLabel jLabel17;
+    private javax.swing.JLabel jLabel18;
+    private javax.swing.JLabel jLabel19;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel20;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
@@ -1138,22 +1294,26 @@ public class MainForm extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JTabbedPane jTabbedPane6;
     private javax.swing.JComboBox<String> selectGrupoCombo;
+    private javax.swing.JComboBox<String> selectLancamentoGrupo;
     private javax.swing.JComboBox<String> selectTurma;
     private javax.swing.JTable tableAluno;
     private javax.swing.JTable tableGrupo;
     private javax.swing.JTable tableTurma;
     private javax.swing.JTextField txtAceleracaoMedia;
     private javax.swing.JTextField txtAltitudeEjecao;
+    private javax.swing.JTextField txtAltitudeMaxima;
     private javax.swing.JTextField txtAltitudeMedia;
     private javax.swing.JTextField txtAlunoNome;
     private javax.swing.JTextField txtDuracao;
     private javax.swing.JTextField txtGrupoNome;
+    private javax.swing.JTextField txtPicoAceleracao;
     private javax.swing.JTextField txtRMAluno;
     private javax.swing.JTextField txtTaxaDescida;
     private javax.swing.JTextField txtTempoApogeuDescida;
     private javax.swing.JTextField txtTempoEjecao;
     private javax.swing.JTextField txtTempoPropulsao;
     private javax.swing.JTextField txtTurma;
+    private javax.swing.JTextField txtVelocidadeMaxima;
     private javax.swing.JTextField txtVelocidadeMedia;
     // End of variables declaration//GEN-END:variables
 }

@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import javax.swing.JOptionPane;
 import modelo.Turma;
 import modelo.Grupo;
-import modelo.Lancamentto;
+import modelo.Lancamento;
 
 
 /**
